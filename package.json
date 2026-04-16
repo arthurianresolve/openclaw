@@ -1398,7 +1398,7 @@
     "gaxios": "7.1.4",
     "google-auth-library": "^10.6.2",
     "grammy": "^1.42.0",
-    "hono": "4.12.12",
+    "hono": "4.12.14",
     "https-proxy-agent": "^9.0.0",
     "ipaddr.js": "^2.3.0",
     "jimp": "^1.6.1",
