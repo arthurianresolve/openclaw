@@ -28,7 +28,7 @@ extension ProcessInfo {
         let isAppBundle = Bundle.main.bundleURL.pathExtension == "app"
         let stableSuite = UserDefaults(suiteName: launchdLabel)
         return Self.resolveNixMode(
-            environment: self.environment,
+            environment: OpenClawEnv.environment,
             standard: .standard,
             stableSuite: stableSuite,
             isAppBundle: isAppBundle)

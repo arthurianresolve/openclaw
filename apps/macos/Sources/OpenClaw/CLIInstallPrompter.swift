@@ -67,7 +67,8 @@ final class CLIInstallPrompter {
     }
 
     private static func appVersion() -> String? {
-        Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
+        OpenClawEnv.string("OPENCLAW_VERSION")
+            ?? Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
     }
 }
 

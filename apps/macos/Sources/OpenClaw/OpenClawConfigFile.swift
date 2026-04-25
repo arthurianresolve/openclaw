@@ -277,7 +277,9 @@ enum OpenClawConfigFile {
 
     private static func stampMeta(_ root: inout [String: Any]) {
         var meta = root["meta"] as? [String: Any] ?? [:]
-        let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "macos-app"
+        let version = OpenClawEnv.string("OPENCLAW_VERSION")
+            ?? Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
+            ?? "macos-app"
         meta["lastTouchedVersion"] = version
         meta["lastTouchedAt"] = ISO8601DateFormatter().string(from: Date())
         root["meta"] = meta

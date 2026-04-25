@@ -142,7 +142,8 @@ final class InstancesStore {
     private func localFallbackInstance(reason: String) -> InstanceInfo {
         let host = Host.current().localizedName ?? "this-mac"
         let ip = SystemPresenceInfo.primaryIPv4Address()
-        let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
+        let version = OpenClawEnv.string("OPENCLAW_VERSION")
+            ?? Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
         let osVersion = ProcessInfo.processInfo.operatingSystemVersion
         let platform = "macos \(osVersion.majorVersion).\(osVersion.minorVersion).\(osVersion.patchVersion)"
         let text = "Local node: \(host)\(ip.map { " (\($0))" } ?? "") · app \(version ?? "dev")"

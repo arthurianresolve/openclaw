@@ -61,7 +61,7 @@ extension NodeServiceManager {
         quiet: Bool) async -> CommandResult
     {
         let command = self.serviceCommand(args)
-        var env = ProcessInfo.processInfo.environment
+        var env = OpenClawEnv.environment
         env["PATH"] = CommandResolver.preferredPaths().joined(separator: ":")
         let response = await ShellExecutor.runDetailed(command: command, cwd: nil, env: env, timeout: timeout)
         let parsed = self.parseServiceJson(from: response.stdout) ?? self.parseServiceJson(from: response.stderr)

@@ -116,7 +116,7 @@ enum HostEnvSanitizer {
 
     static func sanitize(overrides: [String: String]?, shellWrapper: Bool = false) -> [String: String] {
         var merged: [String: String] = [:]
-        for (rawKey, value) in ProcessInfo.processInfo.environment {
+        for (rawKey, value) in OpenClawEnv.environment {
             let key = rawKey.trimmingCharacters(in: .whitespacesAndNewlines)
             guard !key.isEmpty else { continue }
             let upper = key.uppercased()
