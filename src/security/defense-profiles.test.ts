@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { profileForModel } from "../../src/security/defense-profiles";
+import { profileForModel } from "./defense-profiles.js";
 
 describe("profileForModel", () => {
   it("maps GPT models to openai-like", () => {

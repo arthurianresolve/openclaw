@@ -1,5 +1,5 @@
 import type { ReplyPayload } from "../auto-reply/types.js";
-import type { OpenClawConfig } from "../config/types.js";
+import type { OpenClawConfig } from "../config/config.js";
 import { detectPromptLeak } from "./prompt-leak-detector.js";
 import { redactReplyPayload } from "./reply-redaction.js";
 import type { RuntimeReplyGuardContext } from "./runtime-reply-guard-context.js";

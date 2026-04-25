@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { detectPromptLeak } from "../../src/security/prompt-leak-detector";
+import { detectPromptLeak } from "./prompt-leak-detector.js";
 
 describe("detectPromptLeak", () => {
   it("returns low risk for ordinary text", () => {

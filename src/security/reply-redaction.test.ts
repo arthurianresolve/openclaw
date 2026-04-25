@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { redactReplyPayload } from "./reply-redaction";
+import { redactReplyPayload } from "./reply-redaction.js";
 
 describe("redactReplyPayload", () => {
   it("preserves metadata while replacing text", () => {

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { createRuntimeReplyGuardContext } from "./runtime-reply-guard-context";
+import { createRuntimeReplyGuardContext } from "./runtime-reply-guard-context.js";
 
 describe("createRuntimeReplyGuardContext", () => {
   it("detects sensitive prompts and resolves profile", () => {

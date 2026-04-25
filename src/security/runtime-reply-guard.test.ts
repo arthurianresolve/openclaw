@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { guardRuntimeReply } from "./runtime-reply-guard";
-import { createRuntimeReplyGuardContext } from "./runtime-reply-guard-context";
+import { createRuntimeReplyGuardContext } from "./runtime-reply-guard-context.js";
+import { guardRuntimeReply } from "./runtime-reply-guard.js";
 
 describe("guardRuntimeReply", () => {
   it("allows benign text", () => {

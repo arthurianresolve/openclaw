@@ -1,8 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  assessSensitiveSelfReport,
-  isSensitiveSelfReportPrompt,
-} from "../../src/security/sensitive-self-report";
+import { assessSensitiveSelfReport, isSensitiveSelfReportPrompt } from "./sensitive-self-report.js";
 
 describe("sensitive self report", () => {
   it("detects sensitive prompt forms", () => {

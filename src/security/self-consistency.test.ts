@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { evaluateSelfConsistency } from "../../src/security/self-consistency";
+import { evaluateSelfConsistency } from "./self-consistency.js";
 
 describe("evaluateSelfConsistency", () => {
   it("marks identical answers stable", () => {

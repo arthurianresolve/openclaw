@@ -125,6 +125,16 @@ export type OpenClawConfig = {
   commands?: CommandsConfig;
   approvals?: ApprovalsConfig;
   session?: SessionConfig;
+  security?: {
+    replyGuard?: {
+      enabled?: boolean;
+      mode?: "off" | "audit" | "enforce";
+      highRiskAction?: "block" | "redact";
+      defaultLeakThreshold?: number;
+      allowToolSummaries?: boolean;
+      maxVerificationCallsPerTurn?: number;
+    };
+  };
   web?: WebConfig;
   channels?: ChannelsConfig;
   cron?: CronConfig;
