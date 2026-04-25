@@ -48,7 +48,7 @@ actor GatewayEndpointStore {
                 return GatewayEndpointStore.resolveGatewayToken(
                     isRemote: isRemote,
                     root: root,
-                    env: ProcessInfo.processInfo.environment,
+                    env: OpenClawEnv.environment,
                     launchdSnapshot: GatewayLaunchAgentManager.launchdConfigSnapshot())
             },
             password: {
@@ -57,7 +57,7 @@ actor GatewayEndpointStore {
                 return GatewayEndpointStore.resolveGatewayPassword(
                     isRemote: isRemote,
                     root: root,
-                    env: ProcessInfo.processInfo.environment,
+                    env: OpenClawEnv.environment,
                     launchdSnapshot: GatewayLaunchAgentManager.launchdConfigSnapshot())
             },
             localPort: { GatewayEnvironment.gatewayPort() },
@@ -65,7 +65,7 @@ actor GatewayEndpointStore {
                 let root = OpenClawConfigFile.loadDict()
                 let bind = GatewayEndpointStore.resolveGatewayBindMode(
                     root: root,
-                    env: ProcessInfo.processInfo.environment)
+                    env: OpenClawEnv.environment)
                 let customBindHost = GatewayEndpointStore.resolveGatewayCustomBindHost(root: root)
                 let tailscaleIP = await MainActor.run { TailscaleService.shared.tailscaleIP }
                     ?? TailscaleService.fallbackTailnetIPv4()
@@ -244,11 +244,11 @@ actor GatewayEndpointStore {
         let port = deps.localPort()
         let bind = GatewayEndpointStore.resolveGatewayBindMode(
             root: OpenClawConfigFile.loadDict(),
-            env: ProcessInfo.processInfo.environment)
+            env: OpenClawEnv.environment)
         let customBindHost = GatewayEndpointStore.resolveGatewayCustomBindHost(root: OpenClawConfigFile.loadDict())
         let scheme = GatewayEndpointStore.resolveGatewayScheme(
             root: OpenClawConfigFile.loadDict(),
-            env: ProcessInfo.processInfo.environment)
+            env: OpenClawEnv.environment)
         let host = GatewayEndpointStore.resolveLocalGatewayHost(
             bindMode: bind,
             customBindHost: customBindHost,
@@ -298,7 +298,7 @@ actor GatewayEndpointStore {
             let host = await self.deps.localHost()
             let scheme = GatewayEndpointStore.resolveGatewayScheme(
                 root: OpenClawConfigFile.loadDict(),
-                env: ProcessInfo.processInfo.environment)
+                env: OpenClawEnv.environment)
             self.setState(.ready(
                 mode: .local,
                 url: URL(string: "\(scheme)://\(host):\(port)")!,
@@ -327,7 +327,7 @@ actor GatewayEndpointStore {
             self.cancelRemoteEnsure()
             let scheme = GatewayEndpointStore.resolveGatewayScheme(
                 root: OpenClawConfigFile.loadDict(),
-                env: ProcessInfo.processInfo.environment)
+                env: OpenClawEnv.environment)
             self.setState(.ready(
                 mode: .remote,
                 url: URL(string: "\(scheme)://127.0.0.1:\(Int(port))")!,
@@ -439,7 +439,7 @@ actor GatewayEndpointStore {
             let password = self.deps.password()
             let scheme = GatewayEndpointStore.resolveGatewayScheme(
                 root: OpenClawConfigFile.loadDict(),
-                env: ProcessInfo.processInfo.environment)
+                env: OpenClawEnv.environment)
             let url = URL(string: "\(scheme)://127.0.0.1:\(Int(forwarded))")!
             self.setState(.ready(mode: .remote, url: url, token: token, password: password))
             return (url, token, password)
@@ -517,7 +517,7 @@ actor GatewayEndpointStore {
         let root = OpenClawConfigFile.loadDict()
         let bind = GatewayEndpointStore.resolveGatewayBindMode(
             root: root,
-            env: ProcessInfo.processInfo.environment)
+            env: OpenClawEnv.environment)
         guard bind == "tailnet" else { return nil }
 
         let currentHost = currentURL.host?.lowercased() ?? ""
@@ -529,7 +529,7 @@ actor GatewayEndpointStore {
 
         let scheme = GatewayEndpointStore.resolveGatewayScheme(
             root: root,
-            env: ProcessInfo.processInfo.environment)
+            env: OpenClawEnv.environment)
         let port = self.deps.localPort()
         let token = self.deps.token()
         let password = self.deps.password()
@@ -611,7 +611,7 @@ extension GatewayEndpointStore {
     static func localConfig() -> GatewayConnection.Config {
         self.localConfig(
             root: OpenClawConfigFile.loadDict(),
-            env: ProcessInfo.processInfo.environment,
+            env: OpenClawEnv.environment,
             launchdSnapshot: GatewayLaunchAgentManager.launchdConfigSnapshot(),
             tailscaleIP: TailscaleService.fallbackTailnetIPv4())
     }

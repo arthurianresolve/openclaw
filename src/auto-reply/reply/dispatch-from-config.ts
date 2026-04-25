@@ -55,6 +55,8 @@ import {
 import { INTERNAL_MESSAGE_CHANNEL, normalizeMessageChannel } from "../../utils/message-channel.js";
 import type { BlockReplyContext } from "../get-reply-options.types.js";
 import { getReplyPayloadMetadata, type ReplyPayload } from "../reply-payload.js";
+import { createRuntimeReplyGuardContext } from "../../security/runtime-reply-guard-context.js";
+import { guardRuntimeReply } from "../../security/runtime-reply-guard.js";
 import type { FinalizedMsgContext } from "../templating.js";
 import { normalizeVerboseLevel } from "../thinking.js";
 import {
@@ -301,6 +303,18 @@ export async function dispatchReplyFromConfig(
   }
 
   const sessionStoreEntry = resolveSessionStoreLookup(ctx, cfg);
+  const replyGuardContext = createRuntimeReplyGuardContext({
+    userText:
+      typeof ctx.BodyForCommands === "string"
+        ? ctx.BodyForCommands
+        : typeof ctx.CommandBody === "string"
+          ? ctx.CommandBody
+          : typeof ctx.RawBody === "string"
+            ? ctx.RawBody
+            : typeof ctx.Body === "string"
+              ? ctx.Body
+              : undefined,
+  });
   const acpDispatchSessionKey = sessionStoreEntry.sessionKey ?? sessionKey;
   const sessionAgentId = resolveSessionAgentId({ sessionKey: acpDispatchSessionKey, config: cfg });
   const sessionAgentCfg = resolveAgentConfig(cfg, sessionAgentId);
@@ -969,18 +983,27 @@ export async function dispatchReplyFromConfig(
                 deliveryPayload.channelData &&
                 typeof deliveryPayload.channelData === "object" &&
                 !Array.isArray(deliveryPayload.channelData)
-                  ? deliveryPayload.channelData.execApproval
-                  : undefined;
+                ? deliveryPayload.channelData.execApproval
+                : undefined;
               const hasExecApproval =
                 execApproval && typeof execApproval === "object" && !Array.isArray(execApproval);
               if (!hasMedia && !hasExecApproval && deliveryPayload.isError !== true) {
                 return;
               }
             }
+            const guarded = guardRuntimeReply({
+              payload: deliveryPayload,
+              phase: "tool",
+              context: replyGuardContext,
+              cfg,
+            });
+            if (!guarded.payload) {
+              return;
+            }
             if (shouldRouteToOriginating) {
-              await sendPayloadAsync(deliveryPayload, undefined, false);
+              await sendPayloadAsync(guarded.payload, undefined, false);
             } else {
-              dispatcher.sendToolResult(deliveryPayload);
+              dispatcher.sendToolResult(guarded.payload);
             }
           };
           return run();
@@ -1060,10 +1083,19 @@ export async function dispatchReplyFromConfig(
               ttsAuto: sessionTtsAuto,
             });
             const normalizedPayload = await normalizeReplyMediaPayload(ttsPayload);
+            const guarded = guardRuntimeReply({
+              payload: normalizedPayload,
+              phase: "block",
+              context: replyGuardContext,
+              cfg,
+            });
+            if (!guarded.payload) {
+              return;
+            }
             if (shouldRouteToOriginating) {
-              await sendPayloadAsync(normalizedPayload, context?.abortSignal, false);
+              await sendPayloadAsync(guarded.payload, context?.abortSignal, false);
             } else {
-              dispatcher.sendBlockReply(normalizedPayload);
+              dispatcher.sendBlockReply(guarded.payload);
             }
           };
           return run();
@@ -1123,7 +1155,16 @@ export async function dispatchReplyFromConfig(
         if (reply.isReasoning === true) {
           continue;
         }
-        const finalReply = await sendFinalPayload(reply);
+        const guarded = guardRuntimeReply({
+          payload: reply,
+          phase: "final",
+          context: replyGuardContext,
+          cfg,
+        });
+        if (!guarded.payload) {
+          continue;
+        }
+        const finalReply = await sendFinalPayload(guarded.payload);
         queuedFinal = finalReply.queuedFinal || queuedFinal;
         routedFinalCount += finalReply.routedFinalCount;
       }

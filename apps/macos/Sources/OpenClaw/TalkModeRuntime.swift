@@ -1035,7 +1035,7 @@ extension TalkModeRuntime {
     }
 
     private func fetchTalkConfig() async -> TalkModeGatewayConfigState {
-        let env = ProcessInfo.processInfo.environment
+        let env = OpenClawEnv.environment
         let envVoice = env["ELEVENLABS_VOICE_ID"]?.trimmingCharacters(in: .whitespacesAndNewlines)
         let sagVoice = env["SAG_VOICE_ID"]?.trimmingCharacters(in: .whitespacesAndNewlines)
         let envApiKey = env["ELEVENLABS_API_KEY"]?.trimmingCharacters(in: .whitespacesAndNewlines)

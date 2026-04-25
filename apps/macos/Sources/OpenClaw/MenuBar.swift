@@ -32,6 +32,7 @@ struct OpenClawApp: App {
     }
 
     init() {
+        _ = OpenClawEnv.environment
         OpenClawLogging.bootstrapIfNeeded()
 
         Self.applyAttachOnlyOverrideIfNeeded()

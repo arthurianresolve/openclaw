@@ -76,7 +76,7 @@ enum CommandResolver {
     }
 
     static func preferredPaths() -> [String] {
-        let current = ProcessInfo.processInfo.environment["PATH"]?
+        let current = OpenClawEnv.environment["PATH"]?
             .split(separator: ":").map(String.init) ?? []
         let home = FileManager().homeDirectoryForCurrentUser
         let projectRoot = self.projectRoot()

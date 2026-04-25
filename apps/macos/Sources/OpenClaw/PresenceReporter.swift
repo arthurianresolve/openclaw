@@ -71,7 +71,9 @@ final class PresenceReporter {
     }
 
     private static func appVersionString() -> String {
-        let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "dev"
+        let version = OpenClawEnv.string("OPENCLAW_VERSION")
+            ?? Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
+            ?? "dev"
         if let build = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String {
             let trimmed = build.trimmingCharacters(in: .whitespacesAndNewlines)
             if !trimmed.isEmpty, trimmed != version {

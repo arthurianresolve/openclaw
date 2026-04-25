@@ -105,7 +105,7 @@ final class TalkMLXSpeechSynthesizer {
 
     private static func helperInvocation() -> HelperInvocation {
         let fileManager = FileManager.default
-        if let override = ProcessInfo.processInfo.environment["OPENCLAW_MLX_TTS_BIN"], !override.isEmpty {
+        if let override = OpenClawEnv.environment["OPENCLAW_MLX_TTS_BIN"], !override.isEmpty {
             return HelperInvocation(
                 executableURL: URL(fileURLWithPath: override),
                 argumentPrefix: [],

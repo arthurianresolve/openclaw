@@ -19,6 +19,7 @@ import {
   SecretsConfigSchema,
 } from "./zod-schema.core.js";
 import { HookMappingSchema, HooksGmailSchema, InternalHooksSchema } from "./zod-schema.hooks.js";
+import { SecurityReplyGuardSchema } from "./security-reply-guard.js";
 import { PluginInstallRecordShape } from "./zod-schema.installs.js";
 import { ChannelsSchema } from "./zod-schema.providers.js";
 import { sensitive } from "./zod-schema.sensitive.js";
@@ -651,6 +652,12 @@ export const OpenClawSchema = z
         mappings: z.array(HookMappingSchema).optional(),
         gmail: HooksGmailSchema,
         internal: InternalHooksSchema,
+      })
+      .strict()
+      .optional(),
+    security: z
+      .object({
+        replyGuard: SecurityReplyGuardSchema,
       })
       .strict()
       .optional(),
