@@ -178,7 +178,7 @@ describe("bundled plugin root runtime mirrors", () => {
       ["@larksuiteoapi/node-sdk", { conflicts: [], pluginIds: ["feishu"], spec: "^1.60.0" }],
       [
         "@matrix-org/matrix-sdk-crypto-nodejs",
-        { conflicts: [], pluginIds: ["matrix"], spec: "^0.4.0" },
+        { conflicts: [], pluginIds: ["matrix"], spec: "^0.5.1" },
       ],
       [
         "@matrix-org/matrix-sdk-crypto-wasm",
