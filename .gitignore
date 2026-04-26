@@ -45,6 +45,7 @@ bin/
 bin/clawdbot-mac
 bin/docs-list
 apps/macos/.build-local/
+fixtures/linux-native/.build/
 apps/macos/.swiftpm/
 apps/shared/MoltbotKit/.swiftpm/
 apps/shared/OpenClawKit/.swiftpm/
@@ -59,6 +60,7 @@ apps/ios/Clawdbot.xcodeproj/
 apps/ios/Clawdbot.xcodeproj/**
 apps/macos/.build/**
 apps/macos-mlx-tts/.build/**
+fixtures/linux-native/.build/**
 **/*.bun-build
 apps/ios/*.xcfilelist
 
