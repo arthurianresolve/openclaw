@@ -141,9 +141,9 @@ OpenClaw has three public release lanes:
 
 `OpenClaw NPM Release` accepts these operator-controlled inputs:
 
-- `tag`: required release tag such as `v2026.4.2`, `v2026.4.2-1`, or
-  `v2026.4.2-beta.1`; when `preflight_only=true`, it may also be the current
-  full 40-character workflow-branch commit SHA for validation-only preflight
+- `tag`: required release tag such as `v2024.4.24`, `v2024.4.24-1`, or the
+  current full 40-character workflow-branch commit SHA for validation-only
+  preflight when `preflight_only=true`
 - `preflight_only`: `true` for validation/build/package only, `false` for the
   real publish path
 - `preflight_run_id`: required on the real publish path so the workflow reuses

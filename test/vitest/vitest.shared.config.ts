@@ -37,6 +37,8 @@ export const jsdomOptimizedDeps = {
   },
 };
 
+const vitestCacheDir = "/data/tmp/openclaw-vitest-cache";
+
 function detectVitestHostInfo(): Required<VitestHostInfo> {
   return detectVitestHostInfoImpl() as Required<VitestHostInfo>;
 }
@@ -124,6 +126,9 @@ if (!isCI && localScheduling.throttledBySystem && shouldPrintVitestThrottle(proc
 
 export const sharedVitestConfig = {
   root: repoRoot,
+  cacheDir: vitestCacheDir,
+  configLoader: "runner",
+  ...loadVitestExperimentalConfig(process.env),
   envFile: false,
   resolve: {
     alias: [

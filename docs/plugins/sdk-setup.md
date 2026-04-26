@@ -51,12 +51,12 @@ your plugin provides:
   "openclaw": {
     "extensions": ["./index.ts"],
     "compat": {
-      "pluginApi": ">=2026.3.24-beta.2",
-      "minGatewayVersion": "2026.3.24-beta.2"
+      "pluginApi": ">=2024.4.24",
+      "minGatewayVersion": "2024.4.24"
     },
     "build": {
-      "openclawVersion": "2026.3.24-beta.2",
-      "pluginSdkVersion": "2026.3.24-beta.2"
+      "openclawVersion": "2024.4.24",
+      "pluginSdkVersion": "2024.4.24"
     }
   }
 }

@@ -29,15 +29,30 @@ vi.mock("./skills/plugin-skills.js", () => ({
   resolvePluginSkillDirs: () => [],
 }));
 
-async function writeInstallableSkill(workspaceDir: string, name: string): Promise<string> {
+async function writeInstallableSkill(
+  workspaceDir: string,
+  name: string,
+  params?: { os?: string[]; installOs?: string[] },
+): Promise<string> {
   const skillDir = path.join(workspaceDir, "skills", name);
+  const metadataOpenClaw = {
+    ...(params?.os?.length ? { os: params.os } : {}),
+    install: [
+      {
+        id: "deps",
+        kind: "node",
+        package: "example-package",
+        ...(params?.installOs?.length ? { os: params.installOs } : {}),
+      },
+    ],
+  };
   await fs.mkdir(skillDir, { recursive: true });
   await fs.writeFile(
     path.join(skillDir, "SKILL.md"),
     `---
 name: ${name}
 description: test skill
-metadata: {"openclaw":{"install":[{"id":"deps","kind":"node","package":"example-package"}]}}
+metadata: ${JSON.stringify({ openclaw: metadataOpenClaw })}
 ---
 
 # ${name}
@@ -160,6 +175,25 @@ describe("installSkill code safety scanning", () => {
         true,
       );
       expect(result.warnings?.some((warning) => warning.includes("runner.js:1"))).toBe(true);
+      expect(runCommandWithTimeoutMock).not.toHaveBeenCalled();
+    });
+  });
+
+  it("blocks install before scanning when skill is incompatible with Linux", async () => {
+    await withWorkspaceCase(async ({ workspaceDir }) => {
+      await writeInstallableSkill(workspaceDir, "darwin-skill", { os: ["darwin"] });
+
+      const result = await installSkill({
+        workspaceDir,
+        skillName: "darwin-skill",
+        installId: "deps",
+      });
+
+      expect(result.ok).toBe(false);
+      expect(result.incompatible).toBe(true);
+      expect(result.recreateSuggested).toBe(true);
+      expect(result.message).toContain("incompatibility with Linux");
+      expect(scanDirectoryWithSummaryMock).not.toHaveBeenCalled();
       expect(runCommandWithTimeoutMock).not.toHaveBeenCalled();
     });
   });

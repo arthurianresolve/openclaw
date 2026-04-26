@@ -9,9 +9,13 @@ title: "Install"
 
 ## System requirements
 
+- **Linux ARM64 only** — this fork is optimized for Raspberry Pi 5 8 GB and other ARM64 Linux hosts
 - **Node 24** (recommended) or Node 22.14+ — the installer script handles this automatically
-- **macOS, Linux, or Windows** — both native Windows and WSL2 are supported; WSL2 is more stable. See [Windows](/platforms/windows).
 - `pnpm` is only needed if you build from source
+
+<Note>
+Windows and macOS install flows remain documented in the upstream project, but they are not supported by this fork release.
+</Note>
 
 ## Recommended: installer script
 
@@ -20,12 +24,7 @@ The fastest way to install. It detects your OS, installs Node if needed, install
 <Tabs>
   <Tab title="macOS / Linux / WSL2">
     ```bash
-    curl -fsSL https://openclaw.ai/install.sh | bash
-    ```
-  </Tab>
-  <Tab title="Windows (PowerShell)">
-    ```powershell
-    iwr -useb https://openclaw.ai/install.ps1 | iex
+    curl -fsSL https://raw.githubusercontent.com/arthurianresolve/excaliclaw/main/scripts/install.sh | bash
     ```
   </Tab>
 </Tabs>
@@ -35,12 +34,7 @@ To install without running onboarding:
 <Tabs>
   <Tab title="macOS / Linux / WSL2">
     ```bash
-    curl -fsSL https://openclaw.ai/install.sh | bash -s -- --no-onboard
-    ```
-  </Tab>
-  <Tab title="Windows (PowerShell)">
-    ```powershell
-    & ([scriptblock]::Create((iwr -useb https://openclaw.ai/install.ps1))) -NoOnboard
+    curl -fsSL https://raw.githubusercontent.com/arthurianresolve/excaliclaw/main/scripts/install.sh | bash -s -- --no-onboard
     ```
   </Tab>
 </Tabs>
@@ -63,18 +57,18 @@ prefix flow. Full reference: [Installer internals](/install/installer#install-cl
 
 ### npm, pnpm, or bun
 
-If you already manage Node yourself:
+If you already manage Node yourself and want the fork package:
 
 <Tabs>
   <Tab title="npm">
     ```bash
-    npm install -g openclaw@latest
+    npm install -g github:arthurianresolve/excaliclaw#main
     openclaw onboard --install-daemon
     ```
   </Tab>
   <Tab title="pnpm">
     ```bash
-    pnpm add -g openclaw@latest
+    pnpm add -g github:arthurianresolve/excaliclaw#main
     pnpm approve-builds -g
     openclaw onboard --install-daemon
     ```
@@ -86,7 +80,7 @@ If you already manage Node yourself:
   </Tab>
   <Tab title="bun">
     ```bash
-    bun add -g openclaw@latest
+    bun add -g github:arthurianresolve/excaliclaw#main
     openclaw onboard --install-daemon
     ```
 
@@ -101,7 +95,7 @@ If you already manage Node yourself:
   If `sharp` fails due to a globally installed libvips:
 
 ```bash
-SHARP_IGNORE_GLOBAL_LIBVIPS=1 npm install -g openclaw@latest
+SHARP_IGNORE_GLOBAL_LIBVIPS=1 npm install -g github:arthurianresolve/excaliclaw#main
 ```
 
 </Accordion>
@@ -111,8 +105,8 @@ SHARP_IGNORE_GLOBAL_LIBVIPS=1 npm install -g openclaw@latest
 For contributors or anyone who wants to run from a local checkout:
 
 ```bash
-git clone https://github.com/openclaw/openclaw.git
-cd openclaw
+git clone https://github.com/arthurianresolve/excaliclaw.git
+cd excaliclaw
 pnpm install && pnpm build && pnpm ui:build
 pnpm link --global
 openclaw onboard --install-daemon
@@ -123,7 +117,7 @@ Or skip the link and use `pnpm openclaw ...` from inside the repo. See [Setup](/
 ### Install from GitHub main
 
 ```bash
-npm install -g github:openclaw/openclaw#main
+npm install -g github:arthurianresolve/excaliclaw#main
 ```
 
 ### Containers and package managers

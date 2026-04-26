@@ -25,7 +25,7 @@ function makeTempDir() {
 function createIndex(overrides: Partial<InstalledPluginIndex> = {}): InstalledPluginIndex {
   return {
     version: 1,
-    hostContractVersion: "2026.4.25",
+    hostContractVersion: "2024.4.24",
     compatRegistryVersion: "compat-v1",
     policyHash: "policy-v1",
     generatedAtMs: 1777118400000,
@@ -122,7 +122,7 @@ describe("installed plugin index persistence", () => {
       OPENCLAW_BUNDLED_PLUGINS_DIR: undefined,
       OPENCLAW_DISABLE_PLUGIN_DISCOVERY_CACHE: "1",
       OPENCLAW_DISABLE_PLUGIN_MANIFEST_CACHE: "1",
-      OPENCLAW_VERSION: "2026.4.25",
+      OPENCLAW_VERSION: "2024.4.24",
       VITEST: "true",
     };
 
@@ -221,7 +221,7 @@ describe("installed plugin index persistence", () => {
         OPENCLAW_BUNDLED_PLUGINS_DIR: undefined,
         OPENCLAW_DISABLE_PLUGIN_DISCOVERY_CACHE: "1",
         OPENCLAW_DISABLE_PLUGIN_MANIFEST_CACHE: "1",
-        OPENCLAW_VERSION: "2026.4.25",
+        OPENCLAW_VERSION: "2024.4.24",
         VITEST: "true",
       },
     });

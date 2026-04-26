@@ -7,11 +7,11 @@ read_when:
 title: "Raspberry Pi (platform)"
 ---
 
-# OpenClaw on Raspberry Pi
+# OpenClaw on Raspberry Pi 5
 
 ## Goal
 
-Run a persistent, always-on OpenClaw Gateway on a Raspberry Pi for **~$35-80** one-time cost (no monthly fees).
+Run a persistent, always-on OpenClaw Gateway on a Raspberry Pi 5 for **~$35-80** one-time cost (no monthly fees).
 
 Perfect for:
 
@@ -21,14 +21,14 @@ Perfect for:
 
 ## Hardware Requirements
 
-| Pi Model        | RAM     | Works?   | Notes                              |
-| --------------- | ------- | -------- | ---------------------------------- |
-| **Pi 5**        | 4GB/8GB | ✅ Best  | Fastest, recommended               |
-| **Pi 4**        | 4GB     | ✅ Good  | Sweet spot for most users          |
-| **Pi 4**        | 2GB     | ✅ OK    | Works, add swap                    |
-| **Pi 4**        | 1GB     | ⚠️ Tight | Possible with swap, minimal config |
-| **Pi 3B+**      | 1GB     | ⚠️ Slow  | Works but sluggish                 |
-| **Pi Zero 2 W** | 512MB   | ❌       | Not recommended                    |
+| Pi Model        | RAM   | Works?   | Notes                              |
+| --------------- | ----- | -------- | ---------------------------------- |
+| **Pi 5**        | 8GB   | ✅ Best  | Fastest, recommended               |
+| **Pi 4**        | 4GB   | ✅ Good  | Sweet spot for most users          |
+| **Pi 4**        | 2GB   | ✅ OK    | Works, add swap                    |
+| **Pi 4**        | 1GB   | ⚠️ Tight | Possible with swap, minimal config |
+| **Pi 3B+**      | 1GB   | ⚠️ Slow  | Works but sluggish                 |
+| **Pi Zero 2 W** | 512MB | ❌       | Not recommended                    |
 
 **Minimum specs:** 1GB RAM, 1 core, 500MB disk  
 **Recommended:** 2GB+ RAM, 64-bit OS, 16GB+ SD card (or USB SSD)
@@ -112,7 +112,9 @@ sudo sysctl -p
 ### Option A: Standard Install (Recommended)
 
 ```bash
-curl -fsSL https://openclaw.ai/install.sh | bash
+git clone https://github.com/arthurianresolve/excaliclaw.git /data/openclaw
+cd /data/openclaw
+OPENCLAW_STATE_DIR=/data/.openclaw npm install -g .
 ```
 
 ### Option B: Hackable Install (For tinkering)
@@ -130,7 +132,7 @@ The hackable install gives you direct access to logs and code — useful for deb
 ## 7) Run Onboarding
 
 ```bash
-openclaw onboard --install-daemon
+OPENCLAW_STATE_DIR=/data/.openclaw openclaw onboard --install-daemon
 ```
 
 Follow the wizard:
@@ -144,7 +146,7 @@ Follow the wizard:
 
 ```bash
 # Check status
-openclaw status
+OPENCLAW_STATE_DIR=/data/.openclaw openclaw status
 
 # Check service (standard install = systemd user unit)
 systemctl --user status openclaw-gateway.service

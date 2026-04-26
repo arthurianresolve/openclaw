@@ -94,6 +94,52 @@ function normalizeSkillInstallSpec(spec: SkillInstallSpec): SkillInstallSpecMeta
   };
 }
 
+function formatPlatformLabel(platform: string): string {
+  switch (platform) {
+    case "darwin":
+      return "macOS";
+    case "linux":
+      return "Linux";
+    case "win32":
+      return "Windows";
+    default:
+      return platform;
+  }
+}
+
+function resolveInstallCompatibilityFailure(params: {
+  entry: SkillEntry;
+  spec: SkillInstallSpec;
+}): SkillInstallResult | undefined {
+  const currentPlatform = process.platform;
+  const currentLabel = formatPlatformLabel(currentPlatform);
+  const reasons: string[] = [];
+
+  const entryOs = params.entry.metadata?.os ?? [];
+  if (entryOs.length > 0 && !entryOs.includes(currentPlatform)) {
+    reasons.push(`skill metadata targets ${entryOs.join(", ")}`);
+  }
+
+  const specOs = params.spec.os ?? [];
+  if (specOs.length > 0 && !specOs.includes(currentPlatform)) {
+    reasons.push(`installer "${params.spec.kind}" targets ${specOs.join(", ")}`);
+  }
+
+  if (reasons.length === 0) {
+    return undefined;
+  }
+
+  return createInstallFailure({
+    message: [
+      `Skill not installed due to incompatibility with ${currentLabel}.`,
+      reasons.join("; "),
+      "If you want the same functionality on this machine, recreate it for the local environment instead.",
+    ].join(" "),
+    incompatible: true,
+    recreateSuggested: true,
+  });
+}
+
 function buildNodeInstallCommand(packageName: string, prefs: SkillsInstallPreferences): string[] {
   switch (prefs.nodeManager) {
     case "pnpm":
@@ -228,6 +274,8 @@ function createInstallFailure(params: {
   stdout?: string;
   stderr?: string;
   code?: number | null;
+  incompatible?: boolean;
+  recreateSuggested?: boolean;
 }): SkillInstallResult {
   return {
     ok: false,
@@ -235,6 +283,8 @@ function createInstallFailure(params: {
     stdout: params.stdout?.trim() ?? "",
     stderr: params.stderr?.trim() ?? "",
     code: params.code ?? null,
+    ...(params.incompatible ? { incompatible: true } : {}),
+    ...(params.recreateSuggested ? { recreateSuggested: true } : {}),
   };
 }
 
@@ -436,14 +486,32 @@ export async function installSkill(params: SkillInstallRequest): Promise<SkillIn
     };
   }
 
-  const spec = findInstallSpec(entry, params.installId);
   const warnings: string[] = [];
+  const spec = findInstallSpec(entry, params.installId);
+  if (!spec) {
+    return withWarnings(
+      {
+        ok: false,
+        message: `Installer not found: ${params.installId}`,
+        stdout: "",
+        stderr: "",
+        code: null,
+      },
+      warnings,
+    );
+  }
+
+  const compatibilityFailure = resolveInstallCompatibilityFailure({ entry, spec });
+  if (compatibilityFailure) {
+    return compatibilityFailure;
+  }
+
   const skillSource = resolveSkillSource(entry.skill);
-  const normalizedSpec = spec ? normalizeSkillInstallSpec(spec) : undefined;
+  const normalizedSpec = normalizeSkillInstallSpec(spec);
   const scanResult = await scanSkillInstallSource({
     dangerouslyForceUnsafeInstall: params.dangerouslyForceUnsafeInstall,
     installId: params.installId,
-    ...(normalizedSpec ? { installSpec: normalizedSpec } : {}),
+    installSpec: normalizedSpec,
     logger: {
       warn: (message) => warnings.push(message),
     },
@@ -471,18 +539,7 @@ export async function installSkill(params: SkillInstallRequest): Promise<SkillIn
       `WARNING: Skill "${params.skillName}" install triggered from non-bundled source "${skillSource}". Verify the install recipe is trusted.`,
     );
   }
-  if (!spec) {
-    return withWarnings(
-      {
-        ok: false,
-        message: `Installer not found: ${params.installId}`,
-        stdout: "",
-        stderr: "",
-        code: null,
-      },
-      warnings,
-    );
-  }
+
   if (spec.kind === "download") {
     const downloadResult = await installDownloadSpec({ entry, spec, timeoutMs });
     return withWarnings(downloadResult, warnings);

@@ -519,7 +519,7 @@ OpenAI image request shape.
 
 <Note>
 Azure routing for the `openai` provider's image-generation path requires
-OpenClaw 2026.4.22 or later. Earlier versions treat any custom
+OpenClaw 2024.4.24 or later. Earlier versions treat any custom
 `openai.baseUrl` like the public OpenAI endpoint and will fail against Azure
 image deployments.
 </Note>

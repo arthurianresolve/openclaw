@@ -1,17 +1,17 @@
 {
   "name": "openclaw",
-  "version": "2026.4.25",
+  "version": "2024.4.24",
   "description": "Multi-channel AI gateway with extensible messaging integrations",
   "keywords": [],
-  "homepage": "https://github.com/openclaw/openclaw#readme",
+  "homepage": "https://github.com/arthurianresolve/excaliclaw#readme",
   "bugs": {
-    "url": "https://github.com/openclaw/openclaw/issues"
+    "url": "https://github.com/arthurianresolve/excaliclaw/issues"
   },
   "license": "MIT",
   "author": "",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/openclaw/openclaw.git"
+    "url": "git+https://github.com/arthurianresolve/excaliclaw.git"
   },
   "bin": {
     "openclaw": "openclaw.mjs"
@@ -49,6 +49,12 @@
     "scripts/preinstall-package-manager-warning.mjs",
     "scripts/postinstall-bundled-plugins.mjs",
     "scripts/windows-cmd-helpers.mjs"
+  ],
+  "os": [
+    "linux"
+  ],
+  "cpu": [
+    "arm64"
   ],
   "type": "module",
   "main": "dist/index.js",

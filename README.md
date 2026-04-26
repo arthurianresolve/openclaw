@@ -96,13 +96,12 @@ Model note: while many providers and models are supported, prefer a current flag
 
 ## Install (recommended)
 
-Runtime: **Node 24 (recommended) or Node 22.14+**.
+Runtime: **Linux ARM64 only**. Raspberry Pi 5 with 8 GB is the target.
 
 ```bash
-npm install -g openclaw@latest
-# or: pnpm add -g openclaw@latest
-
-openclaw onboard --install-daemon
+OPENCLAW_GIT_DIR=/data/openclaw \
+OPENCLAW_STATE_DIR=/data/.openclaw \
+curl -fsSL --proto '=https' --tlsv1.2 https://raw.githubusercontent.com/arthurianresolve/excaliclaw/main/scripts/install.sh | bash -s -- --install-method git
 ```
 
 OpenClaw Onboard installs the Gateway daemon (launchd/systemd user service) so it stays running.

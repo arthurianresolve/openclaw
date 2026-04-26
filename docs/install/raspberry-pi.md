@@ -7,11 +7,11 @@ read_when:
 title: "Raspberry Pi"
 ---
 
-Run a persistent, always-on OpenClaw Gateway on a Raspberry Pi. Since the Pi is just the gateway (models run in the cloud via API), even a modest Pi handles the workload well.
+Run a persistent, always-on OpenClaw Gateway on a Raspberry Pi 5. Since the Pi is just the gateway (models run in the cloud via API), even a modest Pi handles the workload well.
 
 ## Prerequisites
 
-- Raspberry Pi 4 or 5 with 2 GB+ RAM (4 GB recommended)
+- Raspberry Pi 5 with 8 GB RAM recommended
 - MicroSD card (16 GB+) or USB SSD (better performance)
 - Official Pi power supply
 - Network connection (Ethernet or WiFi)
@@ -77,13 +77,15 @@ Run a persistent, always-on OpenClaw Gateway on a Raspberry Pi. Since the Pi is 
 
   <Step title="Install OpenClaw">
     ```bash
-    curl -fsSL https://openclaw.ai/install.sh | bash
+    git clone https://github.com/arthurianresolve/excaliclaw.git /data/openclaw
+    cd /data/openclaw
+    OPENCLAW_STATE_DIR=/data/.openclaw npm install -g .
     ```
   </Step>
 
   <Step title="Run onboarding">
     ```bash
-    openclaw onboard --install-daemon
+    OPENCLAW_STATE_DIR=/data/.openclaw openclaw onboard --install-daemon
     ```
 
     Follow the wizard. API keys are recommended over OAuth for headless devices. Telegram is the easiest channel to start with.
@@ -92,7 +94,7 @@ Run a persistent, always-on OpenClaw Gateway on a Raspberry Pi. Since the Pi is 
 
   <Step title="Verify">
     ```bash
-    openclaw status
+    OPENCLAW_STATE_DIR=/data/.openclaw openclaw status
     systemctl --user status openclaw-gateway.service
     journalctl --user -u openclaw-gateway.service -f
     ```

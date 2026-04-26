@@ -1,8 +1,8 @@
 #!/bin/bash
 set -euo pipefail
 
-# OpenClaw Installer for macOS and Linux
-# Usage: curl -fsSL --proto '=https' --tlsv1.2 https://openclaw.ai/install.sh | bash
+# OpenClaw Installer for Linux ARM64
+# Usage: curl -fsSL --proto '=https' --tlsv1.2 https://raw.githubusercontent.com/arthurianresolve/excaliclaw/main/scripts/install.sh | bash
 
 BOLD='\033[1m'
 ACCENT='\033[38;2;255;77;77m'       # coral-bright  #ff4d4d
@@ -261,10 +261,20 @@ detect_os_or_die() {
 
     if [[ "$OS" == "unknown" ]]; then
         ui_error "Unsupported operating system"
-        echo "This installer supports macOS and Linux (including WSL)."
-        echo "For Windows, use: iwr -useb https://openclaw.ai/install.ps1 | iex"
+        echo "This fork supports Linux ARM64 only."
         exit 1
     fi
+
+    local arch
+    arch="$(uname -m 2>/dev/null || true)"
+    case "$arch" in
+        arm64|aarch64) ;;
+        *)
+            ui_error "Unsupported CPU architecture"
+            echo "This fork supports Linux ARM64 only."
+            exit 1
+            ;;
+    esac
 
     ui_success "Detected: $OS"
 }
@@ -963,12 +973,15 @@ TAGLINE=$(pick_tagline)
 NO_ONBOARD=${OPENCLAW_NO_ONBOARD:-0}
 NO_PROMPT=${OPENCLAW_NO_PROMPT:-0}
 DRY_RUN=${OPENCLAW_DRY_RUN:-0}
-INSTALL_METHOD=${OPENCLAW_INSTALL_METHOD:-}
+INSTALL_METHOD=${OPENCLAW_INSTALL_METHOD:-git}
 OPENCLAW_VERSION=${OPENCLAW_VERSION:-latest}
 USE_BETA=${OPENCLAW_BETA:-0}
-GIT_DIR_DEFAULT="${HOME}/openclaw"
+GIT_DIR_DEFAULT="/data/openclaw"
 GIT_DIR=${OPENCLAW_GIT_DIR:-$GIT_DIR_DEFAULT}
 GIT_UPDATE=${OPENCLAW_GIT_UPDATE:-1}
+OPENCLAW_STATE_DIR_DEFAULT="/data/.openclaw"
+OPENCLAW_STATE_DIR=${OPENCLAW_STATE_DIR:-$OPENCLAW_STATE_DIR_DEFAULT}
+export OPENCLAW_STATE_DIR
 SHARP_IGNORE_GLOBAL_LIBVIPS="${SHARP_IGNORE_GLOBAL_LIBVIPS:-1}"
 NPM_LOGLEVEL="${OPENCLAW_NPM_LOGLEVEL:-error}"
 NPM_SILENT_FLAG="--silent"
@@ -980,18 +993,18 @@ HELP=0
 
 print_usage() {
     cat <<EOF
-OpenClaw installer (macOS + Linux)
+OpenClaw installer (Linux ARM64)
 
 Usage:
-  curl -fsSL --proto '=https' --tlsv1.2 https://openclaw.ai/install.sh | bash -s -- [options]
+  curl -fsSL --proto '=https' --tlsv1.2 https://raw.githubusercontent.com/arthurianresolve/excaliclaw/main/scripts/install.sh | bash -s -- [options]
 
 Options:
-  --install-method, --method npm|git   Install via npm (default) or from a git checkout
+  --install-method, --method npm|git   Install via git (default) or from a packaged npm release
   --npm                               Shortcut for --install-method npm
   --git, --github                     Shortcut for --install-method git
   --version <version|dist-tag|spec>    npm install target (default: latest; use "main" for GitHub main)
   --beta                               Use beta if available, else latest
-  --git-dir, --dir <path>             Checkout directory (default: ~/openclaw)
+  --git-dir, --dir <path>             Checkout directory (default: /data/openclaw)
   --no-git-update                      Skip git pull for existing checkout
   --no-onboard                          Skip onboarding (non-interactive)
   --no-prompt                           Disable prompts (required in CI/automation)
@@ -1015,11 +1028,11 @@ Environment variables:
   SHARP_IGNORE_GLOBAL_LIBVIPS=0|1    Default: 1 (avoid sharp building against global libvips)
 
 Examples:
-  curl -fsSL --proto '=https' --tlsv1.2 https://openclaw.ai/install.sh | bash
-  curl -fsSL --proto '=https' --tlsv1.2 https://openclaw.ai/install.sh | bash -s -- --no-onboard
-  curl -fsSL --proto '=https' --tlsv1.2 https://openclaw.ai/install.sh | bash -s -- --no-onboard --verify
-  curl -fsSL --proto '=https' --tlsv1.2 https://openclaw.ai/install.sh | bash -s -- --version main
-  curl -fsSL --proto '=https' --tlsv1.2 https://openclaw.ai/install.sh | bash -s -- --install-method git --no-onboard
+  curl -fsSL --proto '=https' --tlsv1.2 https://raw.githubusercontent.com/arthurianresolve/excaliclaw/main/scripts/install.sh | bash
+  curl -fsSL --proto '=https' --tlsv1.2 https://raw.githubusercontent.com/arthurianresolve/excaliclaw/main/scripts/install.sh | bash -s -- --no-onboard
+  curl -fsSL --proto '=https' --tlsv1.2 https://raw.githubusercontent.com/arthurianresolve/excaliclaw/main/scripts/install.sh | bash -s -- --no-onboard --verify
+  curl -fsSL --proto '=https' --tlsv1.2 https://raw.githubusercontent.com/arthurianresolve/excaliclaw/main/scripts/install.sh | bash -s -- --version main
+  curl -fsSL --proto '=https' --tlsv1.2 https://raw.githubusercontent.com/arthurianresolve/excaliclaw/main/scripts/install.sh | bash -s -- --install-method git --no-onboard
 EOF
 }
 
@@ -1211,7 +1224,7 @@ print_homebrew_admin_fix() {
     echo "  2) Ask an Administrator to grant admin rights, then sign out/in:"
     echo "     sudo dseditgroup -o edit -a ${current_user} -t user admin"
     echo "Then retry:"
-    echo "  curl -fsSL https://openclaw.ai/install.sh | bash"
+    echo "  curl -fsSL https://raw.githubusercontent.com/arthurianresolve/excaliclaw/main/scripts/install.sh | bash"
 }
 
 install_homebrew() {
@@ -1365,7 +1378,7 @@ ensure_default_node_active_shell() {
         echo "  nvm use ${NODE_DEFAULT_MAJOR}"
         echo "  nvm alias default ${NODE_DEFAULT_MAJOR}"
         echo "Then open a new shell and rerun:"
-        echo "  curl -fsSL https://openclaw.ai/install.sh | bash"
+        echo "  curl -fsSL https://raw.githubusercontent.com/arthurianresolve/excaliclaw/main/scripts/install.sh | bash"
     else
         echo "Install/select Node.js ${NODE_DEFAULT_MAJOR} (or Node ${NODE_MIN_VERSION}+ minimum) and ensure it is first on PATH, then rerun installer."
     fi
@@ -1974,7 +1987,7 @@ resolve_package_install_spec() {
     local normalized_value=""
     normalized_value="$(to_lowercase_ascii "$value")"
     if [[ "$normalized_value" == "main" ]]; then
-        echo "github:openclaw/openclaw#main"
+        echo "github:arthurianresolve/excaliclaw#main"
         return 0
     fi
     if is_explicit_package_install_spec "$value"; then
@@ -2275,8 +2288,8 @@ main() {
 
     if [[ -z "$INSTALL_METHOD" && -n "$detected_checkout" ]]; then
         if ! is_promptable; then
-            ui_info "Found OpenClaw checkout but no TTY; defaulting to npm install"
-            INSTALL_METHOD="npm"
+            ui_info "Found OpenClaw checkout but no TTY; defaulting to git install"
+            INSTALL_METHOD="git"
         else
             local selected_method=""
             selected_method="$(choose_install_method_interactive "$detected_checkout" || true)"
@@ -2294,7 +2307,7 @@ main() {
     fi
 
     if [[ -z "$INSTALL_METHOD" ]]; then
-        INSTALL_METHOD="npm"
+        INSTALL_METHOD="git"
     fi
 
     if [[ "$INSTALL_METHOD" != "npm" && "$INSTALL_METHOD" != "git" ]]; then
@@ -2458,7 +2471,7 @@ main() {
         ui_kv "Checkout" "$final_git_dir"
         ui_kv "Wrapper" "$HOME/.local/bin/openclaw"
         ui_kv "Update command" "openclaw update --restart"
-        ui_kv "Switch to npm" "curl -fsSL --proto '=https' --tlsv1.2 https://openclaw.ai/install.sh | bash -s -- --install-method npm"
+        ui_kv "Switch to npm" "curl -fsSL --proto '=https' --tlsv1.2 https://raw.githubusercontent.com/arthurianresolve/excaliclaw/main/scripts/install.sh | bash -s -- --install-method npm"
     elif [[ "$is_upgrade" == "true" ]]; then
         ui_info "Upgrade complete"
         if [[ -r /dev/tty && -w /dev/tty ]]; then
